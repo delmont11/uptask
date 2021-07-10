@@ -25,8 +25,5 @@
         </form>
     </div>
 
-    <script src="js/sweetalert2.all.min.js"></script>
+    <?php include 'inc/templates/footer.php' ?>
 
-
-</body>
-</html>
