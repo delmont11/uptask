@@ -70,12 +70,21 @@ if ($accion === 'login') {
 
         $stmt->fetch();
         if ($nombre_usuario) {
-            $respuesta = array(
-                'respuesta' => 'correcto',
-                'id' => $id_usuario,
-                'nombre' => $nombre_usuario,
-                'pass' => $pass_usuario
-            );
+            //El usuario existe, verificar password
+            if (password_verify($pass, $pass_usuario)){
+                //Login correcto
+                $respuesta = array(
+                    'respuesta' => 'correcto',
+                    'nombre' => $nombre_usuario,
+                    'tipo' => $accion
+                );
+            } else{
+                //Login incorrecto, enviar error
+                $respuesta = array(
+                    'resultado' => 'password inválido'
+                );
+            }
+            
         } else {
             $respuesta = array(
                 'respuesta' => 'El usuario no existe'
