@@ -23,7 +23,7 @@ if ($accion == 'crear') {
     try {
         //realizar consulta a la BD
         $stmt = $conn->prepare("INSERT INTO usuarios (usuario, pass) VALUES (?, ?)");
-        $stmt->bind_param('ss', $usuario, $hash_password);
+        $stmt->bind_param('ss', $usuario, $hash_password); //bind_result trae resultados y les asigna variables
         $stmt->execute();
         if ($stmt->affected_rows > 0) {
             $respuesta = array(
@@ -51,6 +51,52 @@ if ($accion == 'crear') {
     echo json_encode($respuesta);
 
 }
+
+
+
+if ($accion === 'login') {
+    //código de logueo
+    include '../funciones/conexion.php';
+
+
+    try{
+        //seleccionar el admin de la BD
+        $stmt = $conn->prepare("SELECT id, usuario, pass FROM usuarios WHERE usuario = ?");
+        $stmt->bind_param('s', $usuario);
+        $stmt->execute();
+
+        //loguear al usuario
+        $stmt->bind_result($id_usuario, $nombre_usuario, $pass_usuario);
+
+        $stmt->fetch();
+        if ($nombre_usuario) {
+            $respuesta = array(
+                'respuesta' => 'correcto',
+                'id' => $id_usuario,
+                'nombre' => $nombre_usuario,
+                'pass' => $pass_usuario
+            );
+        } else {
+            $respuesta = array(
+                'respuesta' => 'El usuario no existe'
+            );
+        }
+
+
+        $stmt->close();
+        $conn->close();
+    }catch(Exception $e) {
+        //tomar la excepcion
+        $respuesta = array(
+            'pass' => $e->getMessage()
+        ); 
+    }
+    echo json_encode($respuesta);
+}
+
+
+
+
 //json es un formato de transporte entre php y js. 'die' es como un 'echo'
 
 ?>

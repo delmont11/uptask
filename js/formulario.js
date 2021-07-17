@@ -41,7 +41,7 @@ function validarRegistro(e) {
             if (this.status === 200) {
                 var respuesta = JSON.parse(xhr.responseText); //responseText trae el json del .php vinculado
                 //JSON.parse convierte la respuesta en un object
-
+                console.log(respuesta);
                 //si la respuesta es correcta
                 if (respuesta.respuesta === 'correcto') {
                     //si es un nuevo usuario
