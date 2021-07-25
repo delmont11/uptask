@@ -46,7 +46,56 @@ function guardarProyectoDB(nombreProyecto) {
     //RETORNO DE DATOS
     xhr.onload = function() {
         if (this.status === 200) {
-            console.log(JSON.parse(xhr.responseText));
+            //obtener datos de la respuesta 
+            var respuesta = JSON.parse(xhr.responseText);
+            var proyecto = respuesta.nombre_proyecto,
+                id_proyecto = respuesta.id_insertado,
+                tipo = respuesta.tipo,
+                resultado = respuesta.respuesta;
+
+
+
+            //comprobar la inserción
+            if (resultado === 'correcto') {
+                //fue exitoso
+                if (tipo === 'crear') {
+                    //se creo un nuevo proyecto
+                    //inyectar en el html
+                    let nuevoProyecto = document.createElement('li');
+                    nuevoProyecto.innerHTML = `
+                    <a href="index.php?id_proyecto=${id_proyecto}" id="${id_proyecto}">
+                        ${proyecto}
+                    </a>
+                    `;
+                    //agregar al html
+                    listaProyectos.appendChild(nuevoProyecto);
+
+                    //enviar alerta
+                    Swal.fire({
+                        icon: 'success',
+                        title: '¡PROYECTO CREADO!',
+                        text: `El proyecto ${proyecto} se ha creado`,
+                        footer: ''
+                    })
+
+                    //redicreccionar a la nueva URL
+                    .then(resultado => {
+                        if (resultado.value) {
+                            window.location.href = `index.php?id_proyecto=${id_proyecto}`;
+                        }
+                    })
+
+                } else {
+                    //se actualizó o se eliminó
+                }
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'ERROR',
+                    text: 'Hubo un error',
+                    footer: ''
+                })
+            }
         }
     }
 
