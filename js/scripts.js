@@ -4,8 +4,11 @@ eventListeners();
 var listaProyectos = document.querySelector('ul#proyectos');
 
 function eventListeners() {
-    //boton para crear proeycto
-    document.querySelector('.crear-proyecto a').addEventListener('click', nuevoProyecto)
+    //boton para crear proyecto
+    document.querySelector('.crear-proyecto a').addEventListener('click', nuevoProyecto);
+
+    //boton para una nueva tarea
+    document.querySelector('.nueva-tarea').addEventListener('click', agregarTarea);
 }
 
 function nuevoProyecto(e) {
@@ -102,19 +105,21 @@ function guardarProyectoDB(nombreProyecto) {
     //ENVIAR LA PETICIÓN
     xhr.send(datos);
 
+}
+//Agregar una nueva tarea al proyecto actual
+function agregarTarea(e) {
+    e.preventDefault();
+    let nombreTarea = document.querySelector('.nombre-tarea').value;
+    //validar que el campo tenga algo escrito 
+    if (nombreTarea === '') {
+        Swal.fire({
+            icon: 'error',
+            title: 'ERROR',
+            text: 'Este campo no puede estar vacío',
+            footer: ''
+        })
+    } else {
+        //si la tarea existe, inserta en PHP
 
-
-
-
-
-
-    // //inyectar el HTML
-    // var nuevoProyecto = document.createElement('li');
-    // nuevoProyecto.innerHTML = `
-    //     <a href="#">
-    //         ${nombreProyecto}
-    //     </a>
-    // `;
-
-    // listaProyectos.appendChild(nuevoProyecto)
+    }
 }

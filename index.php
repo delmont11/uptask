@@ -4,6 +4,12 @@
     include 'inc/templates/header.php'; 
     include 'inc/templates/barra.php'; 
 
+
+    //obtener el ID de la URL
+    if (isset($_GET['id_proyecto'])) {
+        $id_proyecto = $_GET['id_proyecto'];
+    } 
+
 ?>
 
 
@@ -12,22 +18,35 @@
     <?php include 'inc/templates/sidebar.php';  ?>
 
     <main class="contenido-principal">
-        <h1>
-            <span>Diseño de Página Web</span>
-        </h1>
+            <?php 
+                $proyecto = obtenerNombreProyecto($id_proyecto);
 
-        <form action="#" class="agregar-tarea">
-            <div class="campo">
-                <label for="tarea">Tarea:</label>
-                <input type="text" placeholder="Nombre Tarea" class="nombre-tarea"> 
-            </div>
-            <div class="campo enviar">
-                <input type="hidden" id="id_proyecto" value="id_proyecto">
-                <input type="submit" class="boton nueva-tarea" value="Agregar">
-            </div>
-        </form>
+                if ($proyecto):?>
+                <h1>
+                    <?php foreach($proyecto as $nombre); ?>
+                            <span><?php echo $nombre['nombre']; ?></span>
+                    <?php T_ENDFOREACH; ?>
+                </h1>
+
+                <form action="#" class="agregar-tarea">
+                    <div class="campo">
+                        <label for="tarea">Tarea:</label>
+                        <input type="text" placeholder="Nombre Tarea" class="nombre-tarea"> 
+                    </div>
+                    <div class="campo enviar">
+                        <input type="hidden" id="<?php echo $id_proyecto ?>" value="id_proyecto">
+                        <input type="submit" class="boton nueva-tarea" value="Agregar">
+                    </div>
+                </form>
+        <?php 
         
- 
+                else: 
+                    //si no hay proyecto seleccionado
+                    echo "<p>Selecciona un proyecto para empezar</p>"; 
+
+                endif;
+        
+        ?>
 
         <h2>Listado de tareas:</h2>
 

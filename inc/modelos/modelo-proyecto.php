@@ -8,7 +8,7 @@ $accion = $_POST['accion'];
 $proyecto = $_POST['proyecto'];
 
 if ($accion == 'crear') {
-    //código que crea administradores
+    //código que crea inserta proyecto
 
     
     //importar la conexión
