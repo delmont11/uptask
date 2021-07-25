@@ -1,11 +1,8 @@
 <?php 
 
-
-
-
-
 $accion = $_POST['accion'];
-$proyecto = $_POST['proyecto'];
+$id_proyecto = (int) $_POST['id_proyecto'];
+$tarea = $_POST['tarea'];
 
 if ($accion == 'crear') {
     //código que crea inserta proyecto
@@ -16,15 +13,15 @@ if ($accion == 'crear') {
 
     try {
         //realizar consulta a la BD
-        $stmt = $conn->prepare("INSERT INTO proyectos (nombre) VALUES (?)");
-        $stmt->bind_param('s', $proyecto); //bind_result trae resultados y les asigna variables
+        $stmt = $conn->prepare("INSERT INTO tarea (nombre, id_proyecto) VALUES (?, ?)");
+        $stmt->bind_param('si', $tarea, $id_proyecto); //bind_result trae resultados y les asigna variables
         $stmt->execute();
         if ($stmt->affected_rows > 0) {
             $respuesta = array(
                 'respuesta' => 'correcto',
                 'id_insertado' => $stmt->insert_id,
                 'accion' => $accion,
-                'nombre_proyecto' => $proyecto
+                'tarea' => $tarea
             );
         }else {
             $respuesta = array(

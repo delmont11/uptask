@@ -53,7 +53,7 @@ function guardarProyectoDB(nombreProyecto) {
             var respuesta = JSON.parse(xhr.responseText);
             var proyecto = respuesta.nombre_proyecto,
                 id_proyecto = respuesta.id_insertado,
-                tipo = respuesta.tipo,
+                accion = respuesta.accion,
                 resultado = respuesta.respuesta;
 
 
@@ -61,7 +61,7 @@ function guardarProyectoDB(nombreProyecto) {
             //comprobar la inserción
             if (resultado === 'correcto') {
                 //fue exitoso
-                if (tipo === 'crear') {
+                if (accion === 'crear') {
                     //se creo un nuevo proyecto
                     //inyectar en el html
                     let nuevoProyecto = document.createElement('li');
@@ -120,6 +120,28 @@ function agregarTarea(e) {
         })
     } else {
         //si la tarea existe, inserta en PHP
+        //crear llamado a AJAX
+        var xhr = new XMLHttpRequest();
 
+        //crear FormData
+        let datos = new FormData();
+        datos.append('tarea', nombreTarea);
+        datos.append('accion', 'crear');
+        datos.append('id_proyecto', document.querySelector('#id-proyecto').value);
+
+
+        //ABRIR LA CONEXIÓN
+        xhr.open('POST', 'inc/modelos/modelo-tarea.php', true);
+
+        //ejecutar y respuesta 
+        xhr.onload = function() {
+            if (this.status === 200) {
+                let respuesta = JSON.parse(xhr.responseText);
+                console.log(respuesta);
+            }
+        }
+
+        //enviar la consulta
+        xhr.send(datos);
     }
 }
