@@ -9,6 +9,9 @@ function eventListeners() {
 
     //boton para una nueva tarea
     document.querySelector('.nueva-tarea').addEventListener('click', agregarTarea);
+
+    //botones para las acciones sobre las tareas
+    document.querySelector('.listado-pendientes').addEventListener('click', accionesTareas);
 }
 
 function nuevoProyecto(e) {
@@ -135,38 +138,38 @@ function agregarTarea(e) {
 
         //ejecutar y respuesta 
         xhr.onload = function() {
-            if (this.status === 200) {
-                //t odo Correcto 
-                let respuesta = JSON.parse(xhr.responseText);
+                if (this.status === 200) {
+                    //t odo Correcto 
+                    let respuesta = JSON.parse(xhr.responseText);
 
-                //asignar valores 
-                let resultado = respuesta.respuesta,
-                    tarea = respuesta.tarea,
-                    id_insertado = respuesta.id_insertado,
-                    tipo = respuesta.accion;
+                    //asignar valores 
+                    let resultado = respuesta.respuesta,
+                        tarea = respuesta.tarea,
+                        id_insertado = respuesta.id_insertado,
+                        tipo = respuesta.accion;
 
-                if (resultado === 'correcto') {
-                    //se agregó correctamente
-                    if (tipo === 'crear') {
-                        //lanzar alerta
-                        Swal.fire({
-                            icon: 'success',
-                            title: '¡TAREA CREADA!',
-                            text: `La tarea "${tarea}" se ha creado`,
-                            footer: ''
-                        });
+                    if (resultado === 'correcto') {
+                        //se agregó correctamente
+                        if (tipo === 'crear') {
+                            //lanzar alerta
+                            Swal.fire({
+                                icon: 'success',
+                                title: '¡TAREA CREADA!',
+                                text: `La tarea "${tarea}" se ha creado`,
+                                footer: ''
+                            });
 
-                        //crear un template
-                        var nuevaTarea = document.createElement('li');
+                            //crear un template
+                            var nuevaTarea = document.createElement('li');
 
-                        //agregamos el ID
-                        nuevaTarea.id = `tarea: ${id_insertado}`;
+                            //agregamos el ID
+                            nuevaTarea.id = `tarea: ${id_insertado}`;
 
-                        //agregar la clase tarea 
-                        nuevaTarea.classList.add('tarea');
+                            //agregar la clase tarea 
+                            nuevaTarea.classList.add('tarea');
 
-                        //construir el HTML
-                        nuevaTarea.innerHTML = `
+                            //construir el HTML
+                            nuevaTarea.innerHTML = `
                         <p>${tarea}</p>
                         <div class="acciones">
                         <i class="far fa-check-circle"></i>
@@ -174,27 +177,52 @@ function agregarTarea(e) {
                         </div>
                         `;
 
-                        //agregar al DOM
-                        var listado = document.querySelector('.listado-pendientes ul');
-                        listado.appendChild(nuevaTarea);
+                            //agregar al DOM
+                            var listado = document.querySelector('.listado-pendientes ul');
+                            listado.appendChild(nuevaTarea);
 
-                        //limpiar el formulario
-                        document.querySelector('.agregar-tarea').reset();
+                            //limpiar el formulario
+                            document.querySelector('.agregar-tarea').reset();
 
+                        }
+                    } else {
+                        //hubo un error
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'ERROR',
+                            text: 'Este campo no puede estar vacío',
+                            footer: ''
+                        })
                     }
-                } else {
-                    //hubo un error
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'ERROR',
-                        text: 'Este campo no puede estar vacío',
-                        footer: ''
-                    })
                 }
             }
-        }
-
-        //enviar la consulta
+            //enviar la consulta
         xhr.send(datos);
     }
+}
+
+//cambiar el estado de la tarea o borrarla
+function accionesTareas(e) {
+    e.preventDefault();
+
+    if (e.target.classList.contains('fa-check-circle')) {
+        if (e.target.classList.contains('completo')) {
+            e.target.classList.remove('completo');
+            cambiarEstadoTarea(e.target);
+        } else {
+            e.target.classList.add('completo');
+            cambiarEstadoTarea(e.target);
+        }
+    }
+
+    if (e.target.classList.contains('fa-trash')) {
+        cambiarEstadoTarea(e.target);
+    }
+}
+
+//marcar o desmarcar una tarea
+function cambiarEstadoTarea(tarea) {
+    //obtengo el id de la tarea y aislo el número con split
+    let idTarea = tarea.parentElement.parentElement.id.split(':');
+    console.log(idTarea[1]);
 }
