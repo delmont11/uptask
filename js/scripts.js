@@ -13,7 +13,7 @@ function eventListeners() {
     //botones para las acciones sobre las tareas
     document.querySelector('.listado-pendientes').addEventListener('click', accionesTareas);
 }
-
+//Crea un nuevo proyecto
 function nuevoProyecto(e) {
     e.preventDefault();
 
@@ -38,7 +38,7 @@ function nuevoProyecto(e) {
 
 
 }
-
+//Guarda el proyecto en la BD
 function guardarProyectoDB(nombreProyecto) {
     //CREAR LLAMADO A AJAX
     var xhr = new XMLHttpRequest();
@@ -208,21 +208,95 @@ function accionesTareas(e) {
     if (e.target.classList.contains('fa-check-circle')) {
         if (e.target.classList.contains('completo')) {
             e.target.classList.remove('completo');
-            cambiarEstadoTarea(e.target);
+            cambiarEstadoTarea(e.target, 0);
         } else {
             e.target.classList.add('completo');
-            cambiarEstadoTarea(e.target);
+            cambiarEstadoTarea(e.target, 1);
         }
     }
 
     if (e.target.classList.contains('fa-trash')) {
-        cambiarEstadoTarea(e.target);
+
+        Swal.fire({
+            title: '¿Estas segurx?',
+            text: "Si borras una tarea no podrás recuperarla",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Si, estoy segurx',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.value) {
+                let tareaEliminar = e.target.parentElement.parentElement;
+                //borrar de la BD
+                eliminarTareaBD(tareaEliminar);
+                //Borrar HTML
+                tareaEliminar.remove();
+                //mensaje de confirmación
+                Swal.fire(
+                    'Eliminado!',
+                    'La tarea fue eliminada con éxito',
+                    'success'
+                )
+            }
+        })
     }
 }
 
 //marcar o desmarcar una tarea
-function cambiarEstadoTarea(tarea) {
+function cambiarEstadoTarea(tarea, estado) {
     //obtengo el id de la tarea y aislo el número con split
     let idTarea = tarea.parentElement.parentElement.id.split(':');
-    console.log(idTarea[1]);
+
+
+    //craer llamado ajax
+    var xhr = new XMLHttpRequest();
+
+    //información
+    var datos = new FormData();
+    datos.append('id', idTarea[1]);
+    datos.append('accion', 'actualizar');
+    datos.append('estado', estado);
+
+    //abrir la conexión
+    xhr.open('POST', 'inc/modelos/modelo-tarea.php', true);
+
+    //retorno de datos
+    xhr.onload = function() {
+            if (this.status === 200) {
+                console.log(JSON.parse(xhr.responseText));
+            }
+        }
+        //enviar la petición
+    xhr.send(datos);
+}
+
+
+
+//ELimina las tareas de la BD
+function eliminarTareaBD(tarea) {
+    //obtengo el id de la tarea y aislo el número con split
+    let idTarea = tarea.id.split(':');
+
+
+    //craer llamado ajax
+    var xhr = new XMLHttpRequest();
+
+    //información
+    var datos = new FormData();
+    datos.append('id', idTarea[1]);
+    datos.append('accion', 'eliminar');
+
+    //abrir la conexión
+    xhr.open('POST', 'inc/modelos/modelo-tarea.php', true);
+
+    //retorno de datos
+    xhr.onload = function() {
+            if (this.status === 200) {
+                console.log(JSON.parse(xhr.responseText));
+            }
+        }
+        //enviar la petición
+    xhr.send(datos);
 }
